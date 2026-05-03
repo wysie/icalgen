@@ -1,30 +1,24 @@
 var cal;
 var SEPARATOR = (navigator.appVersion.indexOf('Win') !== -1) ? '\r\n' : '\n';
-var laddaShortLink;
-var laddaGCalShortLink;
 
 function init() {
     'use strict';
-
-    gapi.client.setApiKey('GOOGLE_API_BROWSER_KEY');
-    gapi.client.load('urlshortener', 'v1',function(){});
+    populateTimezones();
 }
 
-function googleShorten(longUrl) {
+function populateTimezones() {
     'use strict';
-    var request = gapi.client.urlshortener.url.insert({
-        'resource': {
-            'longUrl': longUrl
-        }
+    var $timezones = $('#timezones');
+    var guessedTimezone = moment.tz.guess() || 'UTC';
+
+    $timezones.empty();
+    moment.tz.names().forEach(function(timezone) {
+        $('<option>').val(timezone).text(timezone).appendTo($timezones);
     });
 
-    request.execute(function(response) {
-        if(response.id != null) {
-            $('#outputGCalShortLink').val(response.id);
-            laddaGCalShortLink.stop();
-        }
-    });
- }
+    $timezones.val(guessedTimezone);
+    $timezones.selectpicker('refresh');
+}
 
 function updatePreview() {
     'use strict';
@@ -210,23 +204,8 @@ function parseURL() {
     }
 }
 
-function updateShortLink(response) {
-    'use strict';
-    $('#outputShortLink').val(response.data.url);
-    laddaShortLink.stop();
-}
-
-function updateGCalShortLink(response) {
-    'use strict';
-    $('#outputGCalShortLink').val(response.data.url);
-    laddaGCalShortLink.stop();
-}
-
 $(function() {
     'use strict';
-
-    laddaShortLink = Ladda.create($('#generateShortLink')[0]);
-    laddaGCalShortLink = Ladda.create($('#generateGCalShortLink')[0]);
 
 	$('#generateFormCalendar').validator().on('submit', function(e) {
         if (!e.isDefaultPrevented()) {
@@ -328,20 +307,8 @@ $(function() {
         $('#inputEndTime').data('DateTimePicker').show();
     });
 
-    $('#generateShortLink').on('click', function() {
-	 	laddaShortLink.start();
-        var bitly = Bitly.setLogin('BITLY_LOGIN').setKey('BITLY_API_KEY').setCallback(updateShortLink);
-        bitly.shorten(generateURL());
-    });
-
-    $('#generateGCalShortLink').on('click', function() {
-	 	laddaGCalShortLink.start();
-        googleShorten(generateGoogleCal());
-    });
-
-    $('#timezones').timezones();
     $('#timezones').selectpicker();
-	$(':checkbox').checkboxpicker();
+    populateTimezones();
 
     $('#inputStartDate').datetimepicker({
         format: 'll'
