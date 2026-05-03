@@ -4,13 +4,18 @@
 See live demo [here](http://icalgen.yc.sg)!
 
 ## Building this
-Clone/fork/download this repository, then run `npm install` and `bower install` to install project dependencies.
+This is now a simple static site built with Vite. It no longer requires Bower or Grunt.
 
-Next, you'll need to find `var bitly = Bitly.setLogin('BITLY_LOGIN').setKey('BITLY_API_KEY').setCallback(updateShortLink);` and replace `BITLY_LOGIN` with your bit.ly login, and `BITLY_API_KEY` with your bit.ly API key.
+```bash
+npm install
+npm run build
+```
 
-You'll also need to find `gapi.client.setApiKey('GOOGLE_API_BROWSER_KEY');` and replace `GOOGLE_API_BROWSER_KEY` with your Google API Browser Key.
+The built site is written to `dist/`. For local development:
 
-Finally, `grunt build` to build. After that you can simply use the `dist` folder.
+```bash
+npm run dev
+```
 
 ## Why?
 There are numerous iCalendar (.ics) generators already available, but I could not find one that met my needs:
@@ -23,10 +28,14 @@ There are numerous iCalendar (.ics) generators already available, but I could no
 The iCalendar generator I made is based entirely on JavaScript and does not require any server-side components. It supports various timezones by storing the date and time in UTC, and you can also generate a link that will automatically generate and download an ICS file.
 
 ## External Libraries
-This uses a number of other libraries (bower.json shows all of them), key ones being:
+This uses a number of browser-side libraries, including:
 * [ics.js](https://github.com/nwcell/ics.js/) - My fork of it (which I am using) is [here](https://github.com/Wysie/ics.js/).
 * [moment.js](http://momentjs.com/) and [moment-timezone](http://momentjs.com/timezone/)
 * [URI.js](https://github.com/medialize/URI.js)
+* Bootstrap 3 and related UI plugins
+
+## Notes
+The old Bitly and Google URL Shortener integrations were removed because those APIs are deprecated. The app still generates direct iCalendar download links and Google Calendar event links.
 
 ## TODO
 Refactor/clean up code.
